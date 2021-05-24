@@ -12,11 +12,9 @@ module.exports.register = async (req, res) => {
     if(!password) arrError.push('Password is required!');
     if(!email || !password) {
         let data = {
-            "error": {
-                "success": false,
-                "errors": arrError,
-                "status": 422
-            }
+            "success": false,
+            "errors": arrError,
+            "status": 422
         }
         return res.status(422).json(data);
     } else {
@@ -24,11 +22,9 @@ module.exports.register = async (req, res) => {
         if(checkEmail) {
             arrError.push('Email already exists')
             let data = {
-                "error": {
-                    "success": false,
-                    "errors": arrError,
-                    "status": 409
-                }
+                "success": false,
+                "errors": arrError,
+                "status": 409
             }
             return res.status(409).json(data);
         }
@@ -42,15 +38,13 @@ module.exports.register = async (req, res) => {
     let saveUser = userNew.save();
     saveUser.then(resolve => {
         let data = {
+            "success": true,                
             "data": {
-                "success": true,                
-                "data": {
-                    "firstname": firstname,
-                    "lastname": lastname,
-                    "email": email,                                   
-                },
-                "status": 200
-            }
+                "firstname": firstname,
+                "lastname": lastname,
+                "email": email,                                   
+            },
+            "status": 200
         }
         return res.status(200).json(data);
     })
@@ -64,11 +58,9 @@ module.exports.login = async (req, res) => {
     if(!password) arrError.push('Password is required!');
     if(!email || !password) {
         let data = {
-            "error": {
-                "success": false,
-                "errors": arrError,
-                "status": 422
-            }
+            "success": false,
+            "errors": arrError,
+            "status": 422
         }
         return res.status(422).json(data);
     }
@@ -76,34 +68,28 @@ module.exports.login = async (req, res) => {
     if(!user) {
         arrError.push('Email or password is not correct');
         let data = {
-            "error": {
-                "success": false,
-                "errors": arrError,
-                "status": 422
-            }
+            "success": false,
+            "errors": arrError,
+            "status": 422
         }
         return res.status(422).json(data);
     }
     let token = _jwt.generateToken({email: email});
     let data = {
+        "success": true,
         "data": {
-            "success": true,
-            "data": {
-                "access_token": token,
-                "token__type": "Bearer"
-            },
-            "status": 200
-        }
+            "access_token": token,
+            "token__type": "Bearer"
+        },
+        "status": 200
     }
     return res.status(200).json(data);
 }
 
 module.exports.logout = (req, res) => {
     let data = {
-        "data": {
-            "success": true,          
-            "status": 200
-        }
+        "success": true,          
+        "status": 200
     }
     return res.status(200).json(data);
 }
@@ -121,26 +107,22 @@ module.exports.profile = async (req, res) => {
         }
     } else {
         let data = {
-            "error": {
-                "success": false,
-                "errors": ["Authorizaion"],
-                "status": 401
-            }
+            "success": false,
+            "errors": ["Authorizaion"],
+            "status": 401
         }
         return res.status(401).json(data)
     }
     let profile = await userModel.findOne({email: email}).populate('_role');  
     let data = {
+        "success": true,
         "data": {
-            "success": true,
-            "data": {
-                "fistname": profile.firstname,
-                "lastname": profile.lastname,
-                "email": profile.email,
-                "role": profile._role.name
-            },
-            "status": 200
-        }
+            "fistname": profile.firstname,
+            "lastname": profile.lastname,
+            "email": profile.email,
+            "role": profile._role.name
+        },
+        "status": 200
     }
     return res.send(data)
 }

@@ -1,8 +1,8 @@
 require('dotenv').config();
-
+const cors = require('cors')
 const express = require('express');
 const app = express();
-const port = 3200;
+const port = 3000;
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
@@ -17,8 +17,9 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
+app.use(cors())
 
 /*** use routes ***/
-app.use('/auth', authRoute);
+app.use('/api/auth', authRoute);
 
 app.listen(port, () => console.log('Server is running...'));
