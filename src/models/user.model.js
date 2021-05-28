@@ -4,7 +4,8 @@ const userSchema = new mongoose.Schema({
     firstname: String,
     lastname: String,
     email: String,
-    password: String
+    password: String,
+    image: {type: String, default: 'https://upload.wikimedia.org/wikipedia/commons/7/70/User_icon_BLACK-01.png'}
 })
 const User = mongoose.model('User', userSchema, 'users');
 module.exports = User;

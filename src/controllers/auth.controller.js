@@ -74,12 +74,12 @@ module.exports.login = async (req, res) => {
         }
         return res.status(422).json(data);
     }
-    let token = _jwt.generateToken({email: email});
+    let token = _jwt.generateToken({email: user.email, role: user._role});
     let data = {
         "success": true,
         "data": {
             "access_token": token,
-            "token__type": "Bearer"
+            "token_type": "Bearer"
         },
         "status": 200
     }
@@ -117,10 +117,15 @@ module.exports.profile = async (req, res) => {
     let data = {
         "success": true,
         "data": {
-            "fistname": profile.firstname,
+            "id": profile._id,
+            "firstname": profile.firstname,
             "lastname": profile.lastname,
             "email": profile.email,
-            "role": profile._role.name
+            "image": profile.image,
+            "role": {
+                id: profile._role ? profile._role._id : '',
+                name: profile._role ? profile._role.name : '',
+            }
         },
         "status": 200
     }
