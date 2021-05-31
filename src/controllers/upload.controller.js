@@ -4,7 +4,7 @@ const userModel = require('../models/user.model');
 const listUploadModel = require('../models/listUpload.model');
 const _jwt = require('../helpers/jwt.helper');
 
-module.exports.post = async (req, res) => {
+module.exports.post = async (req, res) => {        
     let checkHeaders = req.headers['authorization'];
     let email = '';
     if(checkHeaders) {
@@ -32,8 +32,7 @@ module.exports.post = async (req, res) => {
             created_at: result.created_at,
             isLike: false
         });        
-        let upload = await uploadNew.save();
-        console.log(upload)
+        let upload = await uploadNew.save();        
         let user = await userModel.findOne({email: email});
         let idUpload = upload._id;
         let idUser = user._id;
@@ -54,4 +53,29 @@ module.exports.post = async (req, res) => {
     catch (err) {
         console.log(err);
     }
+}
+module.exports.update = async (req, res) => {
+    let id = req.body.id;
+    let findId = await listUploadModel.findById(id).populate('_upload');
+    let update = await uploadModel.findByIdAndUpdate(findId._upload._id, {isLike: true}, {new: true});
+    let findAfterUpdate = await listUploadModel.findById(id).populate('_upload');
+    let data = {
+        "success": true,
+        "data": {
+            listUpload: findAfterUpdate
+        },
+        "status": 200
+    }
+    return res.json(data);
+}
+module.exports.delete = async (req, res) => {
+    let id = req.params['id'];
+    let findListUpload = await listUploadModel.findById(id).populate('_upload');
+    await uploadModel.findByIdAndDelete(findListUpload._upload._id);
+    await listUploadModel.findByIdAndDelete(id);
+    let data = {
+        "success": true,
+        "status": 200
+    }
+    return res.json(data);
 }

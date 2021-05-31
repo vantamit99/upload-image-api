@@ -23,8 +23,7 @@ module.exports.manager = async (req, res) => {
     }
     let user = await userModel.findOne({email: email});
     let userId = user._id;
-    let listUpload = await listUploadModel.find({_user: userId}).populate('_upload');
-    console.log(listUpload);
+    let listUpload = await listUploadModel.find({_user: userId}).populate('_upload');   
     let data = {
         "success": true,
         "data": {

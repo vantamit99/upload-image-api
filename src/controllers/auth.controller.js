@@ -1,6 +1,7 @@
 const userModel = require('../models/user.model');
 const roleModel = require('../models/role.model');
 const _jwt = require('../helpers/jwt.helper');
+const cloudinary = require('../utils/cloudinary');
 
 module.exports.register = async (req, res) => {
     let firstname = req.body.firstname;
@@ -94,7 +95,7 @@ module.exports.logout = (req, res) => {
     return res.status(200).json(data);
 }
 
-module.exports.profile = async (req, res) => {
+module.exports.profileGet = async (req, res) => {
     let checkHeaders = req.headers['authorization'];
     let email = '';
     if(checkHeaders) {
@@ -130,4 +131,37 @@ module.exports.profile = async (req, res) => {
         "status": 200
     }
     return res.send(data)
+}
+module.exports.profilePut = async (req, res) => {
+    let image = '';
+    let firstname = req.body.firstname;
+    let lastname = req.body.lastname;
+    let email = req.body.email;
+    let id = req.body.id;    
+    if(req.files.length > 0) {
+        try {
+            const result = await cloudinary.uploader.upload(req.files[0].path);   
+            image = result.secure_url;
+        }
+        catch (err) {
+            console.log(err);
+        }
+    } else {
+        image = 'https://upload.wikimedia.org/wikipedia/commons/7/70/User_icon_BLACK-01.png'
+    } 
+    let objUpdate = {
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        image: image
+    }
+    let update = await userModel.findByIdAndUpdate(id, objUpdate, {new: true});
+    let data = {
+        "success": true,
+        "data": {
+            profile: update
+        },
+        "status": 200
+    }   
+    return res.json(data)
 }
